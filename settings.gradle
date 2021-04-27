@@ -1,0 +1,2 @@
+rootProject.name='Tricky preguntas'
+include ':app'
