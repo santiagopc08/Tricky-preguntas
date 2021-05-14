@@ -284,11 +284,11 @@
         android:layout_height="128dp"
         android:layout_marginTop="16dp"
         android:contentDescription="img"
+        android:tint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitulo"
-        app:srcCompat="@drawable/question"
-        app:tint="@android:color/white" />
+        app:srcCompat="@drawable/question" />
 
     <TextView
         android:id="@+id/tvTitulo"
@@ -392,17 +392,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#A62D3436"
-        android:clickable="true"
-        android:visibility="gone"
-        android:focusable="true">
+        android:visibility="gone">
         <ImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:background="@drawable/red_circle"
             android:src="@drawable/incorrect"
+            android:tint="@android:color/white"
             android:padding="24dp"
-            android:layout_centerInParent="true"
-            app:tint="@android:color/white" />
+            android:layout_centerInParent="true"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -417,21 +415,19 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/cNombres"
+        android:id="@+id/correct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#A62D3436"
-        android:clickable="true"
-        android:visibility="gone"
-        android:focusable="true">
+        android:visibility="gone">
         <ImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:background="@drawable/green_circle"
             android:src="@drawable/correct"
+            android:tint="@android:color/white"
             android:padding="24dp"
-            android:layout_centerInParent="true"
-            app:tint="@android:color/white" />
+            android:layout_centerInParent="true"/>
 
         <TextView
             android:layout_width="wrap_content"
