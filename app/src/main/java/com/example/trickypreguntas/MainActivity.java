@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -19,11 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.Console;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     RadioButton rbJugador1, rbJugador2;
     TextView tvPregRestantes;
     int nPreguntas;
-    List<Pregunta> preguntas = new ArrayList<>();
     ConstraintLayout cPregunta;
     TextView tvEnunciado;
     RadioGroup rgOpciones;
@@ -58,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         buttonContainer = findViewById(R.id.buttonContainer);
         rbJugador1 = findViewById(R.id.rbJugador1);
         rbJugador2 = findViewById(R.id.rbJugador2);
+        rbJugador1.setText(MenuActivity.nombre1);
+        rbJugador2.setText(MenuActivity.nombre2);
         tvPregRestantes = findViewById(R.id.tvPregRestantes);
         cPregunta = findViewById(R.id.cPregunta);
         tvEnunciado = findViewById(R.id.tvEnunciado);
@@ -66,12 +62,12 @@ public class MainActivity extends AppCompatActivity {
         rbOpcB = findViewById(R.id.rbOpcB);
         rbOpcC = findViewById(R.id.rbOpcC);
         btnResponder = findViewById(R.id.btnResponder);
-        ventanaCorrecta = findViewById(R.id.correct);
+        ventanaCorrecta = findViewById(R.id.cNombres);
         ventanaIncorrecta = findViewById(R.id.incorrect);
         guardarPreguntas();
         inicializarBotones();
         llenarPreguntas();
-        nPreguntas = preguntas.size();
+        nPreguntas = MenuActivity.preguntas.size();
         responder();
     }
 
@@ -130,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             pregunta.setOpciones(new String[]{elementosPreguntas[i + 2], elementosPreguntas[i + 3], elementosPreguntas[i + 4]});
             pregunta.setnOpcCorrecta(Integer.parseInt(elementosPreguntas[i + 5]));
             pregunta.setDificultad(Integer.parseInt(elementosPreguntas[i + 6]));
-            preguntas.add(pregunta);
+            MenuActivity.preguntas.add(pregunta);
         }
     }
 
@@ -152,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         if (nPreguntas > 0) {
             buttonContainer.setVisibility(View.GONE);
             cPregunta.setVisibility(View.VISIBLE);
-            preguntaEnCurso = preguntas.get(obtenerIndice(random.nextInt(preguntas.size())));
+            preguntaEnCurso = MenuActivity.preguntas.get(obtenerIndice(random.nextInt(MenuActivity.preguntas.size())));
             tvEnunciado.setText(preguntaEnCurso.getEnunciado());
             rbOpcA.setText(preguntaEnCurso.getOpciones()[0]);
             rbOpcB.setText(preguntaEnCurso.getOpciones()[1]);
@@ -166,16 +162,16 @@ public class MainActivity extends AppCompatActivity {
     //Método que se ejecuta si "nPreguntas" = 0 y que llama el método "mostrarFinDeJuego()"
     private void victoriaPorPuntos() {
         if (puntajes[0] > puntajes[1]) {
-            infoVictoria = "El jugador 1 ganó con " + puntajes[0] + " puntos!";
+            infoVictoria = MenuActivity.nombre1 + " ganó con " + puntajes[0] + " puntos!";
         } else {
-            infoVictoria = "El jugador 2 ganó con " + puntajes[1] + " puntos!";
+            infoVictoria = MenuActivity.nombre2 + " ganó con " + puntajes[1] + " puntos!";
         }
         mostrarFinDeJuego();
     }
 
     //Función recursiva que obtiene un índice aleatorio de una pregunta que no haya sido respondida
     private int obtenerIndice(int n) {
-        return preguntas.get(n).respondida ? obtenerIndice(random.nextInt(preguntas.size())) : n;
+        return MenuActivity.preguntas.get(n).respondida ? obtenerIndice(random.nextInt(MenuActivity.preguntas.size())) : n;
     }
 
     //Muestra el resultado de la respuesta a una pregunta y cambia de turno
@@ -217,10 +213,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean respuestaCorrecta() {
         if (rbOpcA.isChecked() && preguntaEnCurso.getnOpcCorrecta() == 0 ||
                 rbOpcB.isChecked() && preguntaEnCurso.getnOpcCorrecta() == 1 ||
-                rbOpcC.isChecked() && preguntaEnCurso.getnOpcCorrecta() == 2){
+                rbOpcC.isChecked() && preguntaEnCurso.getnOpcCorrecta() == 2) {
             botones[i][j].getBoton().setClickable(false);
             botones[i][j].setRespondidoPor(turno);
-            preguntas.get(preguntas.indexOf(preguntaEnCurso)).setRespondida(true);
+            MenuActivity.preguntas.get(MenuActivity.preguntas.indexOf(preguntaEnCurso)).setRespondida(true);
             verificarVictoria();
             nPreguntas--;
             tvPregRestantes.setText("Quedan " + nPreguntas + " preguntas");
@@ -254,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Llama los métodos individuales de cada uno de los tipos de victoria posibles (línea o diagonal)
     private void verificarVictoria() {
-        if (verificarDiagonalttb() || verificarDiagonalbtt() || verificarColumnas() || verificarFilas()){
+        if (verificarDiagonalttb() || verificarDiagonalbtt() || verificarColumnas() || verificarFilas()) {
             mostrarFinDeJuego();
         }
 
@@ -281,8 +277,13 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
-            if (nBuenas == nFilas){
-                infoVictoria = "El jugador " + jugador + " ganó al formar una línea vertical";
+            if (nBuenas == nFilas) {
+                if (jugador == 1) {
+                    infoVictoria = MenuActivity.nombre1;
+                } else {
+                    infoVictoria = MenuActivity.nombre2;
+                }
+                infoVictoria += " ganó al formar una línea vertical";
                 return true;
             }
         }
@@ -301,8 +302,13 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
-            if (nBuenas == nColumnas){
-                infoVictoria = "El jugador " + jugador + " ganó al formar una línea horizontal";
+            if (nBuenas == nColumnas) {
+                if (jugador == 1) {
+                    infoVictoria = MenuActivity.nombre1;
+                } else {
+                    infoVictoria = MenuActivity.nombre2;
+                }
+                infoVictoria += " ganó al formar una línea horizontal";
                 return true;
             }
         }
@@ -321,7 +327,12 @@ public class MainActivity extends AppCompatActivity {
             }
             n++;
         }
-        infoVictoria = "El jugador " + jugador + " ganó al formar una diagonal";
+        if (jugador == 1) {
+            infoVictoria = MenuActivity.nombre1;
+        } else {
+            infoVictoria = MenuActivity.nombre2;
+        }
+        infoVictoria += " ganó al formar una diagonal";
         return nBuenas == nFilas;
     }
 
@@ -338,7 +349,12 @@ public class MainActivity extends AppCompatActivity {
             fil++;
             col--;
         }
-        infoVictoria = "El jugador " + jugador + " ganó al formar una diagonal";
+        if (jugador == 1) {
+            infoVictoria = MenuActivity.nombre1;
+        } else {
+            infoVictoria = MenuActivity.nombre2;
+        }
+        infoVictoria += " ganó al formar una diagonal";
         return nBuenas == nFilas;
     }
 }
